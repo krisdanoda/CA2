@@ -1,8 +1,6 @@
 package security;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
@@ -41,6 +39,7 @@ public class LoginEndpoint {
     public Response login(String jsonString) throws AuthenticationException, API_Exception {
         String username;
         String password;
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
         try {
             JsonObject json = JsonParser.parseString(jsonString).getAsJsonObject();
             username = json.get("username").getAsString();
@@ -55,7 +54,12 @@ public class LoginEndpoint {
             JsonObject responseJson = new JsonObject();
             responseJson.addProperty("username", username);
             responseJson.addProperty("token", token);
-            return Response.ok(new Gson().toJson(responseJson)).build();
+            JsonArray roles = new JsonArray();
+            for (String role: user.getRolesAsStrings()){
+                roles.add(role);
+            }
+            responseJson.add("roles", roles);
+            return Response.ok(gson.toJson(responseJson)).build();
 
         } catch (JOSEException | AuthenticationException ex) {
             if (ex instanceof AuthenticationException) {
