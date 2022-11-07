@@ -34,7 +34,10 @@ public class Utility {
     public static RenameMeDTO json2DTO(String json) throws UnsupportedEncodingException{
             return gson.fromJson(new String(json.getBytes("UTF8")), RenameMeDTO.class);
     }
-    
+
+    public Utility() {
+    }
+
     public static String DTO2json(RenameMeDTO rmDTO){
         return gson.toJson(rmDTO, RenameMeDTO.class);
     }
